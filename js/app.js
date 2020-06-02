@@ -13,7 +13,6 @@
  * 
 */
 
-
 /**
  * Define Global Variables
  * 
@@ -35,8 +34,8 @@ function buildNav() {
     navSections.forEach((navSection) => {
         const liTag = document.createElement('li');
         const aTag = document.createElement('a');
-        aTag.className = 'menu__link';
         aTag.innerText = navSection.getAttribute('data-nav');
+        aTag.setAttribute('class', 'menu__link');
 
         // scroll to anchor ID using scroll to event
         aTag.addEventListener("click", () => {
@@ -48,42 +47,46 @@ function buildNav() {
     navMenu.appendChild(fragment);
 };
 
+function getVisibleSectionIndex() {
+    let minor = window.innerHeight;
+    visibleSectionIndex = -1;
 
-// Check if section is in viewport
-
-function isElementInViewport(navSection) {
-    const bounding = navSection.getBoundingClientRect();
-    return (
-        bounding.top >= 0 &&
-        bounding.left >= 0 &&
-        bounding.right <= (window.innerWidth || document.documentElement.clientWidth) &&
-        bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight)
-    );
-}
-
-/**
- * Loop through all section
- * If section is in the vieport Add active state ("your-active-class")
- * If section is not in the viewport Remove active state
- * 
-*/
-
-function setActiveSection (){
-    navSections.forEach((navSection) => {
-        if (isElementInViewport(navSection)){
-            navSection.classList.add('your-active-class');
-        }
-        else {
-            navSection.classList.remove('your-active-class');
+    navSections.forEach((navSection, index) => {
+        let offset = navSection.getBoundingClientRect();
+        if(Math.abs(offset.top) < minor){
+            minor = Math.abs(offset.top);
+            visibleSectionIndex = index;
         }
     });
-};
+    return visibleSectionIndex;
+}
 
+function setActiveSection(){
+    visibleSectionIndex = getVisibleSectionIndex();
 
-// Build menu
+    // If visibleSection exists
+    if(visibleSectionIndex != -1){
+        // create a list of Atags from navigation menu
+        let navATagList = document.querySelectorAll('.menu__link');
 
+        // Loop through all section
+        for (let i = 0; i < navSections.length; i++) {
+            // For section in viewport: Add active state to the section and navigation
+            if (i == visibleSectionIndex){
+                navSections[i].classList.add('your-active-class');
+                navATagList[i].classList.add('your-active-class');
+            }
+            // For other sections: Remove active state from the section and navigation
+            else{
+                navSections[i].classList.remove('your-active-class');
+                navATagList[i].classList.remove('your-active-class');
+            }
+        }; 
+    };
+}
+
+// Build navigation menu
 buildNav();
 
-// Set sections as active
-
+// Set sections as active (highlight section and nav if section is in viewport)
 document.addEventListener('scroll', setActiveSection);
