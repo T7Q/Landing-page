@@ -12,4 +12,4 @@ Detailed project specifications [here](https://review.udacity.com/#!/rubrics/265
 3. JAVASCRIPT
 
 ## View result
-See the landing page [here](https://t7q.github.io/Udacity-Landing-page/) or clone this repository and open index.html in browser.
+See the landing page [here](https://t7q.github.io/Landing-page/) or clone this repository and open index.html in browser.
